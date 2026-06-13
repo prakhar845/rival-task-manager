@@ -1,0 +1,2 @@
+/api/*  https://rival-task-manager-production.up.railway.app/api/:splat  200
+/uploads/*  https://rival-task-manager-production.up.railway.app/uploads/:splat  200
