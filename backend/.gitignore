@@ -1,0 +1,15 @@
+node_modules
+# Keep environment variables out of version control
+.env
+
+/generated/prisma
+
+# Local testing databases
+*.db
+*.sqlite
+dev.db
+dev.db-journal
+
+# Uploads
+uploads/
+!uploads/.gitkeep
