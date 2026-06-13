@@ -1,0 +1,17 @@
+# Global ignores
+node_modules/
+.DS_Store
+.env
+
+# Editor directories and files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Personal review notes
+Assessment_Review_Notes.md
+Demo_Quickstart.md
