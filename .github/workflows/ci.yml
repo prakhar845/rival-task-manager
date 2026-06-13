@@ -1,0 +1,73 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  backend-test:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password123
+          POSTGRES_DB: rival_tasks
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        
+    - name: Install dependencies
+      working-directory: ./backend
+      run: npm install
+      
+    - name: Generate Prisma Client
+      working-directory: ./backend
+      run: npx prisma generate
+
+    - name: Push Database Schema
+      working-directory: ./backend
+      env:
+        DATABASE_URL: postgresql://postgres:password123@localhost:5432/rival_tasks?schema=public
+      run: npx prisma db push
+      
+    - name: Run Backend Tests
+      working-directory: ./backend
+      env:
+        DATABASE_URL: postgresql://postgres:password123@localhost:5432/rival_tasks?schema=public
+        JWT_SECRET: supersecretjwtkey_rival_task_manager
+      run: npm test
+
+  frontend-build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        
+    - name: Install dependencies
+      working-directory: ./frontend
+      run: npm install
+      
+    - name: Build Next.js App
+      working-directory: ./frontend
+      run: npm run build
